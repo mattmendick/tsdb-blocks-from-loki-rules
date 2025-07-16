@@ -1,0 +1,5 @@
+global:
+  scrape_interval: 15s
+
+# No scrape configs needed since we're just reading existing blocks
+scrape_configs: [] 
