@@ -1,6 +1,4 @@
 /data-30days
-generate_30days.sh
 .DS_Store
 /test-step
 loki-tsdb-tool
-prometheus.sh

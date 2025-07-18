@@ -2,6 +2,8 @@
 
 This tool creates Prometheus TSDB blocks from historical Loki query results, using a rules YAML file (similar to Prometheus recording rules).
 
+You can then use these blocks along with mimirtool's backfill capability to send them to Mimir.
+
 ## Usage
 
 ```
