@@ -12,6 +12,7 @@ go build -o loki-tsdb-tool
   --output.dir=./data \
   --start=2024-05-01T00:00:00Z \
   --end=2024-05-02T00:00:00Z \
+  --block.duration=24h \
   --loki.username=YOUR_USERNAME \
   --loki.password=YOUR_PASSWORD
 ```
@@ -20,7 +21,15 @@ go build -o loki-tsdb-tool
 - `--loki.url`: Loki base URL (should end with `/loki/api/v1/query_range` or just the base, which will be appended)
 - `--output.dir`: Output directory for TSDB blocks
 - `--start`, `--end`: Time range to backfill (RFC3339 or Unix timestamp)
+- `--block.duration`: Block duration (e.g., `2h`, `6h`, `24h`, `168h` for 7 days)
 - `--loki.username`, `--loki.password`: Basic auth credentials for Loki (optional)
+
+## Block Duration Examples
+
+- `--block.duration=2h` - 2-hour blocks (Prometheus default)
+- `--block.duration=6h` - 6-hour blocks
+- `--block.duration=24h` - 1-day blocks (efficient for long-term data)
+- `--block.duration=168h` - 1-week blocks (very efficient for historical data)
 
 ## Example rules.yaml
 
@@ -48,6 +57,7 @@ The step size can be configured at three levels (in order of precedence):
 3. **CLI level**: `--step=60s` command line flag (fallback default)
 
 ## Notes
-- The tool will create TSDB blocks in the output directory, one per block duration (default 2h).
+- The tool will create TSDB blocks in the output directory based on the specified block duration.
 - You can use `promtool tsdb dump` or Prometheus itself to inspect/import the blocks.
-- Loki credentials are optional, but required for secured endpoints (e.g., Grafana Cloud Loki). 
+- Loki credentials are optional, but required for secured endpoints (e.g., Grafana Cloud Loki).
+- For long-term historical data, consider using larger block durations (24h or 168h) for better efficiency. 

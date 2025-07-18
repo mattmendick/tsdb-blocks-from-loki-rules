@@ -30,7 +30,7 @@ type RulesFile struct {
 	} `yaml:"groups"`
 }
 
-func Run(rulesFile, lokiURL, outputDir, start, end, step, username, password string) error {
+func Run(rulesFile, lokiURL, outputDir, start, end, step, blockDuration, username, password string) error {
 	// Parse times
 	stime, err := parseTime(start)
 	if err != nil {
@@ -47,6 +47,12 @@ func Run(rulesFile, lokiURL, outputDir, start, end, step, username, password str
 	}
 	if !stime.Before(etime) {
 		return errors.New("start time must be before end time")
+	}
+
+	// Parse block duration
+	blockDur, err := time.ParseDuration(blockDuration)
+	if err != nil {
+		return fmt.Errorf("invalid block duration: %w", err)
 	}
 
 	// Parse rules YAML
@@ -80,7 +86,7 @@ func Run(rulesFile, lokiURL, outputDir, start, end, step, username, password str
 			if err != nil {
 				return fmt.Errorf("loki query failed for rule %s: %w", rule.Name, err)
 			}
-			if err := writeTSDBBlocks(outputDir, rule, matrix, stime, etime); err != nil {
+			if err := writeTSDBBlocks(outputDir, rule, matrix, stime, etime, blockDur); err != nil {
 				return fmt.Errorf("write TSDB blocks for rule %s: %w", rule.Name, err)
 			}
 		}
@@ -116,8 +122,7 @@ type Sample struct {
 }
 
 // writeTSDBBlocks writes the matrix samples to TSDB blocks using tsdb.BlockWriter
-func writeTSDBBlocks(outputDir string, rule Rule, matrix MatrixSample, stime, etime time.Time) error {
-	const blockDuration = 2 * time.Hour // Prometheus default block duration
+func writeTSDBBlocks(outputDir string, rule Rule, matrix MatrixSample, stime, etime time.Time, blockDuration time.Duration) error {
 	ctx := context.Background()
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 

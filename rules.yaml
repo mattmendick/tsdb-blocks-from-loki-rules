@@ -2,7 +2,7 @@ groups:
   - name: loki-metrics
     step: "60s"  # Default step for all rules in this group
     rules:
-      - name: "loki_copilot_monthly_page_load_sum_by_month"
+      - name: "loki_copilot_monthly_page_load_sum_by_month:1m"
         query: 'sum by (service_name, context_month) (count_over_time({service_name="Connections Copilot"} |= `https://connections-copilot.com` |= `"User monthly page load"` != `Googlebot` | logfmt [1m]))'
         step: "60s"  # Override step for this specific rule
         labels:
