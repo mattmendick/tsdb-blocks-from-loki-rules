@@ -61,3 +61,4 @@ The step size can be configured at three levels (in order of precedence):
 - You can use `promtool tsdb dump` or Prometheus itself to inspect/import the blocks.
 - Loki credentials are optional, but required for secured endpoints (e.g., Grafana Cloud Loki).
 - For long-term historical data, consider using larger block durations (24h or 168h) for better efficiency. 
+- This entire project was generated via Cursor, I have no idea if it's nice code or not. The initial prompt is in `cursor.md` but lots of changes were made from there.
